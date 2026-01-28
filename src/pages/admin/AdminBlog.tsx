@@ -39,6 +39,7 @@ import {
   Archive,
   Copy,
   Send,
+  FolderOpen,
 } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
@@ -233,12 +234,20 @@ export default function AdminBlog() {
               Manage your blog posts
             </p>
           </div>
-          <Link to="/admin/blog/new">
-            <Button className="gap-2">
-              <Plus className="h-4 w-4" />
-              {t.admin.newPost}
-            </Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link to="/admin/blog/categories">
+              <Button variant="outline" className="gap-2">
+                <FolderOpen className="h-4 w-4" />
+                {t.admin.categories}
+              </Button>
+            </Link>
+            <Link to="/admin/blog/new">
+              <Button className="gap-2">
+                <Plus className="h-4 w-4" />
+                {t.admin.newPost}
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {/* Filters */}

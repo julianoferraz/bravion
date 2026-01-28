@@ -7,8 +7,10 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Calendar, Clock, Share2, Twitter, Linkedin, Facebook } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { ArrowLeft, Calendar, Clock, Share2, Twitter, Linkedin, Facebook, Copy, Check } from "lucide-react";
 import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
 
 interface BlogPost {
   id: string;
@@ -38,7 +40,9 @@ export default function BlogPost() {
   const [category, setCategory] = useState<Category | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
   const { t } = useLanguage();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (slug) {
@@ -99,6 +103,17 @@ export default function BlogPost() {
 
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
 
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      toast({ title: "Link copied to clipboard!" });
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      toast({ title: "Failed to copy link", variant: "destructive" });
+    }
+  };
+
   // Update meta tags dynamically
   useEffect(() => {
     if (post) {
@@ -122,15 +137,17 @@ export default function BlogPost() {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <main className="pt-24 pb-16 max-w-4xl mx-auto px-4">
-          <Skeleton className="h-8 w-32 mb-8" />
-          <Skeleton className="h-12 w-3/4 mb-4" />
-          <Skeleton className="h-6 w-1/2 mb-8" />
-          <Skeleton className="h-80 w-full mb-8" />
-          <div className="space-y-4">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-3/4" />
+        <main className="pt-24 pb-16">
+          <div className="max-w-3xl mx-auto px-4">
+            <Skeleton className="h-8 w-32 mb-8" />
+            <Skeleton className="h-12 w-full mb-4" />
+            <Skeleton className="h-6 w-2/3 mb-8" />
+            <Skeleton className="aspect-[16/9] w-full rounded-2xl mb-8" />
+            <div className="space-y-4">
+              {[...Array(8)].map((_, i) => (
+                <Skeleton key={i} className="h-4 w-full" />
+              ))}
+            </div>
           </div>
         </main>
         <Footer />
@@ -142,16 +159,24 @@ export default function BlogPost() {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <main className="pt-24 pb-16 max-w-4xl mx-auto px-4 text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-4">
-            {error || "Post not found"}
-          </h1>
-          <Link to="/blog">
-            <Button variant="outline">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              {t.blog.title}
-            </Button>
-          </Link>
+        <main className="pt-24 pb-16 flex items-center justify-center">
+          <div className="text-center max-w-md mx-auto px-4">
+            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-muted flex items-center justify-center">
+              <span className="text-4xl">😕</span>
+            </div>
+            <h1 className="text-2xl font-bold text-foreground mb-4">
+              {error || "Post not found"}
+            </h1>
+            <p className="text-muted-foreground mb-8">
+              The article you're looking for doesn't exist or has been removed.
+            </p>
+            <Link to="/blog">
+              <Button variant="outline" size="lg">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Blog
+              </Button>
+            </Link>
+          </div>
         </main>
         <Footer />
       </div>
@@ -162,120 +187,155 @@ export default function BlogPost() {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <main className="pt-24 pb-16">
-        <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Back link */}
-          <Link
-            to="/blog"
-            className="inline-flex items-center text-muted-foreground hover:text-foreground mb-8"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {t.blog.title}
-          </Link>
+      <main className="pt-24 pb-20">
+        <article>
+          {/* Hero Section */}
+          <header className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+            {/* Back link */}
+            <Link
+              to="/blog"
+              className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Blog
+            </Link>
 
-          {/* Header */}
-          <header className="mb-8">
+            {/* Category */}
             {category && (
-              <Badge variant="secondary" className="mb-4">
+              <Badge variant="secondary" className="mb-6">
                 {category.name}
               </Badge>
             )}
 
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+            {/* Title */}
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6 leading-tight tracking-tight">
               {post.title}
             </h1>
 
+            {/* Excerpt */}
             {post.excerpt && (
-              <p className="text-xl text-muted-foreground mb-6">{post.excerpt}</p>
+              <p className="text-xl text-muted-foreground leading-relaxed mb-8">
+                {post.excerpt}
+              </p>
             )}
 
-            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1">
+            {/* Meta info */}
+            <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+              <span className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
                 {format(new Date(post.published_at), "MMMM d, yyyy")}
               </span>
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-2">
                 <Clock className="h-4 w-4" />
                 {estimateReadTime(post.content_html)} {t.blog.minRead}
               </span>
             </div>
           </header>
 
-          {/* Cover image */}
+          {/* Cover Image - Full width */}
           {post.cover_image_url && (
-            <div className="mb-8 rounded-lg overflow-hidden">
-              <img
-                src={post.cover_image_url}
-                alt={post.title}
-                className="w-full h-auto object-cover"
-              />
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+              <div className="rounded-2xl overflow-hidden">
+                <img
+                  src={post.cover_image_url}
+                  alt={post.title}
+                  className="w-full h-auto object-cover"
+                />
+              </div>
             </div>
           )}
 
-          {/* Content */}
-          <div
-            className="prose prose-invert prose-lg max-w-none mb-12"
-            dangerouslySetInnerHTML={{ __html: post.content_html || "" }}
-          />
+          {/* Content - Astra-inspired typography */}
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div
+              className="prose prose-invert prose-lg max-w-none
+                prose-headings:font-bold prose-headings:tracking-tight
+                prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6
+                prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-4
+                prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-6
+                prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+                prose-strong:text-foreground prose-strong:font-semibold
+                prose-ul:my-6 prose-ul:pl-6 prose-li:text-muted-foreground prose-li:mb-2
+                prose-ol:my-6 prose-ol:pl-6
+                prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-muted-foreground
+                prose-pre:bg-card prose-pre:rounded-xl prose-pre:border prose-pre:border-border
+                prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none
+                prose-img:rounded-xl prose-img:my-8"
+              dangerouslySetInnerHTML={{ __html: post.content_html || "" }}
+            />
 
-          {/* FAQ section if exists */}
-          {post.content_json?.faq && post.content_json.faq.length > 0 && (
-            <section className="mb-12">
-              <h2 className="text-2xl font-bold text-foreground mb-6">FAQ</h2>
-              <div className="space-y-4">
-                {post.content_json.faq.map((item: { question: string; answer: string }, index: number) => (
-                  <div key={index} className="border border-border rounded-lg p-4">
-                    <h3 className="font-semibold text-foreground mb-2">{item.question}</h3>
-                    <p className="text-muted-foreground">{item.answer}</p>
-                  </div>
-                ))}
+            {/* FAQ section if exists */}
+            {post.content_json?.faq && post.content_json.faq.length > 0 && (
+              <section className="mt-16">
+                <h2 className="text-2xl font-bold text-foreground mb-8">Frequently Asked Questions</h2>
+                <div className="space-y-6">
+                  {post.content_json.faq.map((item: { question: string; answer: string }, index: number) => (
+                    <div key={index} className="bg-card border border-border rounded-xl p-6">
+                      <h3 className="font-semibold text-foreground text-lg mb-3">{item.question}</h3>
+                      <p className="text-muted-foreground leading-relaxed">{item.answer}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            <Separator className="my-12" />
+
+            {/* Share Section */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-6">
+              <p className="text-sm font-medium text-foreground">{t.blog.sharePost}</p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="rounded-full"
+                  asChild
+                >
+                  <a
+                    href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(post.title)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Twitter className="h-4 w-4" />
+                  </a>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="rounded-full"
+                  asChild
+                >
+                  <a
+                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Linkedin className="h-4 w-4" />
+                  </a>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="rounded-full"
+                  asChild
+                >
+                  <a
+                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Facebook className="h-4 w-4" />
+                  </a>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="rounded-full"
+                  onClick={copyToClipboard}
+                >
+                  {copied ? <Check className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
+                </Button>
               </div>
-            </section>
-          )}
-
-          {/* Share */}
-          <div className="border-t border-border pt-8">
-            <p className="text-sm text-muted-foreground mb-4">{t.blog.sharePost}</p>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                asChild
-              >
-                <a
-                  href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(post.title)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Twitter className="h-4 w-4" />
-                </a>
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                asChild
-              >
-                <a
-                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Linkedin className="h-4 w-4" />
-                </a>
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                asChild
-              >
-                <a
-                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Facebook className="h-4 w-4" />
-                </a>
-              </Button>
             </div>
           </div>
         </article>

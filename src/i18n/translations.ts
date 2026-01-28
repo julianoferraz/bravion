@@ -126,6 +126,10 @@ export interface Translations {
     content: string;
     excerpt: string;
     category: string;
+    categories: string;
+    categoriesDescription: string;
+    newCategory: string;
+    editCategory: string;
     coverImage: string;
     seo: string;
     metaTitle: string;
@@ -139,6 +143,8 @@ export interface Translations {
     keywords: string;
     generating: string;
     uploadImage: string;
+    visualEditor: string;
+    htmlEditor: string;
     statuses: {
       draft: string;
       generating: string;
@@ -308,6 +314,10 @@ export const translations: Record<Language, Translations> = {
       content: "Content",
       excerpt: "Excerpt",
       category: "Category",
+      categories: "Categories",
+      categoriesDescription: "Manage blog categories",
+      newCategory: "New Category",
+      editCategory: "Edit Category",
       coverImage: "Cover Image",
       seo: "SEO Settings",
       metaTitle: "Meta Title",
@@ -321,6 +331,8 @@ export const translations: Record<Language, Translations> = {
       keywords: "SEO Keywords",
       generating: "Generating...",
       uploadImage: "Upload Image",
+      visualEditor: "Visual",
+      htmlEditor: "HTML",
       statuses: {
         draft: "Draft",
         generating: "Generating",
@@ -488,6 +500,10 @@ export const translations: Record<Language, Translations> = {
       content: "Conteúdo",
       excerpt: "Resumo",
       category: "Categoria",
+      categories: "Categorias",
+      categoriesDescription: "Gerenciar categorias do blog",
+      newCategory: "Nova Categoria",
+      editCategory: "Editar Categoria",
       coverImage: "Imagem de Capa",
       seo: "Configurações de SEO",
       metaTitle: "Meta Título",
@@ -501,6 +517,8 @@ export const translations: Record<Language, Translations> = {
       keywords: "Palavras-chave SEO",
       generating: "Gerando...",
       uploadImage: "Enviar Imagem",
+      visualEditor: "Visual",
+      htmlEditor: "HTML",
       statuses: {
         draft: "Rascunho",
         generating: "Gerando",
