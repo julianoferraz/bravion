@@ -1,0 +1,13 @@
+project_id = "nmbcifsqrbxhbvgssqtd"
+
+[functions.generate-text]
+verify_jwt = false
+
+[functions.generate-image]
+verify_jwt = false
+
+[functions.publish-scheduled]
+verify_jwt = false
+
+[functions.detect-language]
+verify_jwt = false
