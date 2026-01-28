@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/i18n/LanguageContext";
 import Navbar from "@/components/Navbar";
+import RichTextEditor from "@/components/blog/RichTextEditor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,6 +30,7 @@ import {
   Loader2,
   Upload,
   Eye,
+  FolderOpen,
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -510,13 +512,10 @@ export default function AdminBlogEditor() {
                     </div>
                     <div>
                       <Label htmlFor="content">{t.admin.content}</Label>
-                      <Textarea
-                        id="content"
+                      <RichTextEditor
                         value={contentHtml}
-                        onChange={(e) => setContentHtml(e.target.value)}
-                        placeholder="Post content in HTML..."
-                        rows={15}
-                        className="font-mono text-sm"
+                        onChange={setContentHtml}
+                        placeholder="Start writing your post..."
                       />
                     </div>
                   </CardContent>
