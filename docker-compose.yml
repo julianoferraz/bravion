@@ -1,0 +1,42 @@
+# ============================================
+# Docker Compose — Bravion Global (Produção)
+# ============================================
+# Uso: docker compose up -d --build
+# ============================================
+
+version: "3.8"
+
+services:
+  # ==========================================
+  # Frontend (React SPA via Nginx)
+  # ==========================================
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bravion-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=production
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    networks:
+      - bravion-network
+
+networks:
+  bravion-network:
+    driver: bridge
+
+# ============================================
+# NOTAS:
+# - O frontend é servido na porta 3000 internamente
+# - Use Nginx externo (na VPS) como reverse proxy
+#   para redirecionar tráfego HTTPS (443) → 3000
+# - O Supabase permanece no Cloud (recomendado)
+#   ou pode ser adicionado como serviços separados
+# ============================================

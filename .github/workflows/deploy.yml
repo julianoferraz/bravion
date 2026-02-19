@@ -1,0 +1,78 @@
+# ============================================
+# GitHub Actions — Deploy Automático na VPS
+# ============================================
+# Dispara automaticamente a cada push na branch main
+#
+# Secrets necessários no GitHub (Settings > Secrets):
+#   VPS_HOST     — IP ou hostname da VPS
+#   VPS_USER     — Usuário SSH (ex: deploy)
+#   VPS_SSH_KEY  — Chave SSH privada
+#   VPS_PORT     — Porta SSH (padrão: 22)
+# ============================================
+
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Permite executar manualmente
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. Checkout do código
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Configurar Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      # 3. Instalar dependências
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Build de produção
+      - name: Build project
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
+
+      # 5. Deploy via SSH
+      - name: Deploy to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          source: "dist/*"
+          target: "/opt/bravion-global/dist"
+          strip_components: 1
+
+      # 6. Reiniciar containers (se usando Docker)
+      - name: Restart Docker containers
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script: |
+            cd /opt/bravion-global
+            docker compose up -d --build
+            echo "Deploy completed at $(date)"
+
+      # 7. Verificar se o site está acessível
+      - name: Health check
+        run: |
+          sleep 10
+          curl -f -s -o /dev/null -w "%{http_code}" https://${{ secrets.VPS_HOST }} || echo "Health check warning: site may not be ready yet"
