@@ -4,6 +4,21 @@
 
 Bravion Global é uma aplicação web SPA (Single Page Application) construída com **React 18 + TypeScript + Vite + Tailwind CSS + shadcn/ui**, com backend em **Supabase** (PostgreSQL + Edge Functions + Auth + Storage). O projeto consiste em um site institucional para uma empresa de marketing/representação na América Latina, com um **sistema de blog completo** que inclui geração de conteúdo por IA, gerenciamento de categorias e sistema de roles para autores/editores/admins.
 
+**Documento de referência para agentes de IA e desenvolvedores.**
+> Consulte este arquivo antes de implementar, corrigir ou atualizar qualquer parte do projeto.
+
+Regra obrigatória: Antes de implementar, atualizar, modificar ou corrigir qualquer parte deste sistema, você deve consultar este arquivo localizado na raiz do projeto e seguir estritamente e à risca todas as instruções, diretrizes e padrões definidos nele. Nenhuma alteração deve ser feita sem antes ter lido e compreendido completamente o conteúdo desse arquivo. Qualquer decisão técnica, estrutural ou de fluxo deve estar em conformidade com o que está documentado aqui e ao final de cada seção, há um lembrete para consultar este guia novamente antes de prosseguir. O não cumprimento desta regra resultará em erros, inconsistências e falhas no sistema, pois este guia é a fonte definitiva de verdade para o projeto. Portanto, antes de qualquer ação, leia este arquivo cuidadosamente e mantenha-o como referência constante durante todo o processo de desenvolvimento e manutenção do sistema. O guia deve ser atualizado sempre que houver mudanças significativas, mas até lá, ele é a única fonte de verdade para todas as decisões relacionadas a este projeto.
+
+## 🚀 Deploy e Ambiente
+
+- Todo código editado deve ser salvo com Ctrl+S (auto-commit para GitHub automático)
+- Para publicar na VPS após as alterações:
+```bash
+  ssh root@161.97.171.94 "bash /opt/deploy.sh"
+
+  Escolher o número do projeto no menu que aparecer
+  Verificar se o deploy funcionou.
+
 ---
 
 ## Padrões de Código
