@@ -23,8 +23,8 @@ RUN npm run build
 # Stage 2: Servir com Nginx
 FROM nginx:alpine AS production
 
-# Copiar configuração do Nginx
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copiar configuração do Nginx (container-specific)
+COPY nginx-container.conf /etc/nginx/conf.d/default.conf
 
 # Copiar arquivos buildados
 COPY --from=builder /app/dist /usr/share/nginx/html

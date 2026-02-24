@@ -55,7 +55,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT || 22 }}
           source: "dist/*"
-          target: "/opt/bravion-global/dist"
+          target: "/opt/bravion/dist"
           strip_components: 1
 
       # 6. Reiniciar containers (se usando Docker)
@@ -67,7 +67,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT || 22 }}
           script: |
-            cd /opt/bravion-global
+            cd /opt/bravion
             docker compose up -d --build
             echo "Deploy completed at $(date)"
 

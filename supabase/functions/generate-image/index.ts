@@ -28,9 +28,9 @@ serve(async (req) => {
       });
     }
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
+    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+    if (!OPENAI_API_KEY) {
+      throw new Error("OPENAI_API_KEY is not configured");
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -89,21 +89,18 @@ serve(async (req) => {
     // Generate image prompt
     const imagePrompt = `Create a blog cover image: ${theme}. Style: ${style}. Aspect ratio: ${aspectRatio}. Professional, clean, modern design. DO NOT include any text or words in the image. Ultra high resolution.`;
 
-    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const aiResponse = await fetch("https://api.openai.com/v1/images/generations", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash-image",
-        messages: [
-          {
-            role: "user",
-            content: imagePrompt,
-          },
-        ],
-        modalities: ["image", "text"],
+        model: "dall-e-3",
+        prompt: imagePrompt,
+        n: 1,
+        size: "1792x1024",
+        response_format: "b64_json",
       }),
     });
 
@@ -134,14 +131,13 @@ serve(async (req) => {
     }
 
     const aiData = await aiResponse.json();
-    const imageData = aiData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    const base64Data = aiData.data?.[0]?.b64_json;
 
-    if (!imageData) {
+    if (!base64Data) {
       throw new Error("No image returned from AI");
     }
 
     // Convert base64 to blob and upload to storage
-    const base64Data = imageData.replace(/^data:image\/\w+;base64,/, "");
     const imageBuffer = Uint8Array.from(atob(base64Data), (c) => c.charCodeAt(0));
 
     const fileName = `${postId}-${Date.now()}.png`;

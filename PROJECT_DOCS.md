@@ -94,7 +94,7 @@
 ## 4. Estrutura de Pastas
 
 ```
-bravion-global/
+bravion/
 ├── public/                      # Arquivos estáticos públicos
 │   ├── favicon.ico              # Ícone do site
 │   ├── placeholder.svg          # Imagem placeholder

@@ -17,8 +17,8 @@ Este guia detalha o processo completo para migrar o projeto Bravion Global para 
 
 **Via terminal:**
 ```bash
-git clone https://github.com/SEU_USUARIO/SEU_REPO.git bravion-global
-cd bravion-global
+git clone https://github.com/SEU_USUARIO/SEU_REPO.git bravion
+cd bravion
 ```
 
 ### 1.2 Verificar o Projeto Localmente
@@ -404,7 +404,7 @@ psql "postgresql://postgres:SUA_SENHA@localhost:5432/postgres" < schema_dump.sql
 
 ```
 /opt/
-├── bravion-global/              # Projeto principal
+├── bravion/              # Projeto principal
 │   ├── docker-compose.yml       # Orquestração Docker
 │   ├── Dockerfile               # Build do frontend
 │   ├── nginx.conf               # Configuração Nginx
@@ -447,8 +447,8 @@ sudo apt install -y git
 
 ```bash
 cd /opt
-git clone https://github.com/SEU_USUARIO/SEU_REPO.git bravion-global
-cd bravion-global
+git clone https://github.com/SEU_USUARIO/SEU_REPO.git bravion
+cd bravion
 ```
 
 ### 3.4 Configurar Variáveis de Ambiente
@@ -468,8 +468,8 @@ VITE_SUPABASE_PROJECT_ID=seu_project_id_aqui
 ### 3.5 Configurar Nginx
 
 ```bash
-sudo cp nginx.conf /etc/nginx/sites-available/bravion-global
-sudo ln -s /etc/nginx/sites-available/bravion-global /etc/nginx/sites-enabled/
+sudo cp nginx.conf /etc/nginx/sites-available/bravion
+sudo ln -s /etc/nginx/sites-available/bravion /etc/nginx/sites-enabled/
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t
 sudo systemctl restart nginx
@@ -499,7 +499,7 @@ No painel do seu provedor DNS:
 ### 4.1 Build do Projeto
 
 ```bash
-cd /opt/bravion-global
+cd /opt/bravion
 
 # Instalar dependências
 npm install
@@ -508,7 +508,7 @@ npm install
 cp .env.production .env
 npm run build
 
-# Os arquivos finais estarão em /opt/bravion-global/dist/
+# Os arquivos finais estarão em /opt/bravion/dist/
 ```
 
 ### 4.2 Deploy com Docker
@@ -533,7 +533,7 @@ Se preferir não usar Docker para o frontend (já que é apenas um SPA estático
 npm run build
 
 # Copiar arquivos para o diretório do Nginx
-sudo cp -r dist/* /var/www/bravion-global/
+sudo cp -r dist/* /var/www/bravion/
 
 # Reiniciar Nginx
 sudo systemctl restart nginx
@@ -587,7 +587,7 @@ sudo -u deploy mkdir -p /home/deploy/.ssh
 # Cole a chave pública em /home/deploy/.ssh/authorized_keys
 
 # Dar permissão ao diretório do projeto
-sudo chown -R deploy:deploy /opt/bravion-global
+sudo chown -R deploy:deploy /opt/bravion
 ```
 
 ### 5.3 Pipeline de Deploy
